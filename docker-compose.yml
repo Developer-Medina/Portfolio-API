@@ -1,0 +1,14 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_portfolio_api
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: portfolio_api
+      MYSQL_USER: medina
+      MYSQL_PASSWORD: medina123
+
+    ports:
+      - "3313:3306"
