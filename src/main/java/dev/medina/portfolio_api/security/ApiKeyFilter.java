@@ -21,16 +21,21 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
 
         // =====================================================
+        // CORS HEADERS (precisam SEMPRE estar presentes)
+        // =====================================================
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+
+        // =====================================================
         // CORS PRE-FLIGHT (OPTIONS)
         // O navegador faz esse request ANTES do GET real
-        // Ele NÃO envia API Key, então não podemos bloquear aqui
         // =====================================================
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
@@ -43,7 +48,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         if (requestApiKey == null || requestApiKey.isBlank()) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("API key is missing.");
-            return; // se nao mandar a chave, nao usa a api
+            return;
         }
 
         // transformamos as keys em dois componentes
@@ -53,10 +58,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         if (!validKeys.contains(requestApiKey)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Invalid API key.");
-            return; // matamos caso a requisição nao seja valida
+            return;
         }
 
         // se tudo ocorreu bem, a API responde como deveria
         filterChain.doFilter(request, response);
     }
+
 }
