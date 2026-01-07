@@ -21,10 +21,22 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
+
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        // =====================================================
+        // CORS PRE-FLIGHT (OPTIONS)
+        // O navegador faz esse request ANTES do GET real
+        // Ele NÃO envia API Key, então não podemos bloquear aqui
+        // =====================================================
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         // lendo header da requisicao
         String requestApiKey = request.getHeader("PORTFOLIO-API-KEY");
 
@@ -47,5 +59,4 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         // se tudo ocorreu bem, a API responde como deveria
         filterChain.doFilter(request, response);
     }
-
 }
