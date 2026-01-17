@@ -23,7 +23,7 @@ public class ProjectDto {
     @NotBlank
     private String githubUrl;
     @NotNull
-    @Valid
+    @Valid // isso para validar esse dto internamente
     private ProjectDescriptionDto projectDescription;
 
 
